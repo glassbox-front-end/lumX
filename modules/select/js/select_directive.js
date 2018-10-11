@@ -85,7 +85,7 @@
 
         function link(scope, element, attrs)
         {
-            var backwardOneWay = ['customStyle', 'choicesClass', 'autoHide'];
+            var backwardOneWay = ['customStyle', 'choicesClass', 'autoHide', 'canSelectAll'];
             var backwardTwoWay = ['allowClear', 'choices', 'error', 'loading', 'multiple', 'valid'];
 
             angular.forEach(backwardOneWay, function(attribute)
@@ -176,6 +176,8 @@
         lxSelect.registerSelectedTemplate = registerSelectedTemplate;
         lxSelect.select = select;
         lxSelect.unselect = unselect;
+        lxSelect.selectAll = selectAll;
+        lxSelect.unselectAll = unselectAll;
 
         lxSelect.ngModel = angular.isUndefined(lxSelect.ngModel) && lxSelect.multiple ? [] : lxSelect.ngModel;
         lxSelect.unconvertedModel = lxSelect.multiple ? [] : undefined;
@@ -266,6 +268,43 @@
             selectedTemplate = _selectedTemplate;
         }
 
+        function selectAll()
+        {
+            if (!lxSelect.multiple){
+                return;
+            }
+
+            lxSelect.ngModel = [];
+
+            if (angular.isDefined(lxSelect.selectionToModel))
+            {
+                lxSelect.choices.forEach( function(c){
+
+                    lxSelect.selectionToModel(
+                        {
+                            data: c,
+                            callback: function(resp)
+                            {
+                                lxSelect.ngModel.push(resp);
+                            }
+                        });
+                });
+
+            }
+            else
+            {
+                lxSelect.choices.forEach( function(c){
+                    lxSelect.ngModel.push(c);
+                });
+            }
+        }
+
+        function unselectAll()
+        {
+            lxSelect.ngModel = [];
+            lxSelect.unconvertedModel = [];
+        }
+
         function select(_choice)
         {
             if (lxSelect.multiple && angular.isUndefined(lxSelect.ngModel))
@@ -276,20 +315,20 @@
             if (angular.isDefined(lxSelect.selectionToModel))
             {
                 lxSelect.selectionToModel(
-                {
-                    data: _choice,
-                    callback: function(resp)
                     {
-                        if (lxSelect.multiple)
+                        data: _choice,
+                        callback: function(resp)
                         {
-                            lxSelect.ngModel.push(resp);
+                            if (lxSelect.multiple)
+                            {
+                                lxSelect.ngModel.push(resp);
+                            }
+                            else
+                            {
+                                lxSelect.ngModel = resp;
+                            }
                         }
-                        else
-                        {
-                            lxSelect.ngModel = resp;
-                        }
-                    }
-                });
+                    });
             }
             else
             {
@@ -309,13 +348,13 @@
             if (angular.isDefined(lxSelect.selectionToModel))
             {
                 lxSelect.selectionToModel(
-                {
-                    data: _choice,
-                    callback: function(resp)
                     {
-                        lxSelect.ngModel.splice(lxSelect.ngModel.indexOf(resp), 1);
-                    }
-                });
+                        data: _choice,
+                        callback: function(resp)
+                        {
+                            lxSelect.ngModel.splice(lxSelect.ngModel.indexOf(resp), 1);
+                        }
+                    });
 
                 lxSelect.unconvertedModel.splice(lxSelect.unconvertedModel.indexOf(_choice), 1);
             }
@@ -428,8 +467,10 @@
 
         lxSelectChoices.isArray = isArray;
         lxSelectChoices.isSelected = isSelected;
+        lxSelectChoices.isAllSelected = isAllSelected;
         lxSelectChoices.setParentController = setParentController;
         lxSelectChoices.toggleChoice = toggleChoice;
+        lxSelectChoices.toggleAllChoices = toggleAllChoices;
         lxSelectChoices.updateFilter = updateFilter;
         lxSelectChoices.onChoiceKeyDown = onChoiceKeyDown;
 
@@ -458,6 +499,16 @@
         function isArray()
         {
             return angular.isArray(lxSelectChoices.parentCtrl.choices);
+        }
+
+        function isAllSelected()
+        {
+            if (lxSelectChoices.parentCtrl.multiple && isArray())
+            {
+                return lxSelectChoices.parentCtrl.getSelectedModel().length === lxSelectChoices.parentCtrl.choices.length;
+            }
+
+            return false;
         }
 
         function isSelected(_choice)
@@ -498,6 +549,23 @@
                     }
                 });
             }, true);
+        }
+
+        function toggleAllChoices(_event)
+        {
+            if (!lxSelectChoices.parentCtrl.canSelectAll) {
+                _event.stopPropagation();
+                return;
+            }
+
+            if (lxSelectChoices.parentCtrl.multiple && isAllSelected())
+            {
+                lxSelectChoices.parentCtrl.unselectAll();
+            }
+            else
+            {
+                lxSelectChoices.parentCtrl.selectAll();
+            }
         }
 
         function toggleChoice(_choice, _event)

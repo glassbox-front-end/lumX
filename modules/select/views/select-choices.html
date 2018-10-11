@@ -12,6 +12,11 @@
         
         <div ng-if="::lxSelectChoices.isArray()">
             <li class="lx-select-choices__choice"
+                ng-class="{ 'lx-select-choices__choice--is-selected': lxSelectChoices.isAllSelected() }"
+                ng-if="lxSelectChoices.parentCtrl.canSelectAll"
+                ng-click="lxSelectChoices.toggleAllChoices($event)">(Select All)</li>
+
+            <li class="lx-select-choices__choice"
                 ng-class="{ 'lx-select-choices__choice--is-selected': lxSelectChoices.isSelected(choice) }"
                 ng-repeat="choice in lxSelectChoices.parentCtrl.choices | filterChoices:lxSelectChoices.parentCtrl.filter:lxSelectChoices.filterModel"
                 ng-bind-html="::lxSelectChoices.parentCtrl.displayChoice(choice)"

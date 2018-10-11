@@ -1,6 +1,6 @@
 /*
  LumX 
- (c) 2014-2017 LumApps http://ui.lumapps.com
+ (c) 2014-2018 LumApps http://ui.lumapps.com
  License: MIT
 */
 (function()
@@ -2340,84 +2340,6 @@
     'use strict';
 
     angular
-        .module('lumx.progress')
-        .directive('lxProgress', lxProgress);
-
-    function lxProgress()
-    {
-        return {
-            restrict: 'E',
-            templateUrl: 'progress.html',
-            scope:
-            {
-                lxColor: '@?',
-                lxDiameter: '@?',
-                lxType: '@',
-                lxValue: '@'
-            },
-            controller: LxProgressController,
-            controllerAs: 'lxProgress',
-            bindToController: true,
-            replace: true
-        };
-    }
-
-    function LxProgressController()
-    {
-        var lxProgress = this;
-
-        lxProgress.getCircularProgressValue = getCircularProgressValue;
-        lxProgress.getLinearProgressValue = getLinearProgressValue;
-        lxProgress.getProgressDiameter = getProgressDiameter;
-
-        init();
-
-        ////////////
-
-        function getCircularProgressValue()
-        {
-            if (angular.isDefined(lxProgress.lxValue))
-            {
-                return {
-                    'stroke-dasharray': lxProgress.lxValue * 1.26 + ',200'
-                };
-            }
-        }
-
-        function getLinearProgressValue()
-        {
-            if (angular.isDefined(lxProgress.lxValue))
-            {
-                return {
-                    'transform': 'scale(' + lxProgress.lxValue / 100 + ', 1)'
-                };
-            }
-        }
-
-        function getProgressDiameter()
-        {
-            if (lxProgress.lxType === 'circular')
-            {
-                return {
-                    'transform': 'scale(' + parseInt(lxProgress.lxDiameter) / 100 + ')'
-                };
-            }
-
-            return;
-        }
-
-        function init()
-        {
-            lxProgress.lxDiameter = angular.isDefined(lxProgress.lxDiameter) ? lxProgress.lxDiameter : 100;
-            lxProgress.lxColor = angular.isDefined(lxProgress.lxColor) ? lxProgress.lxColor : 'primary';
-        }
-    }
-})();
-(function()
-{
-    'use strict';
-
-    angular
         .module('lumx.radio-button')
         .directive('lxRadioGroup', lxRadioGroup)
         .directive('lxRadioButton', lxRadioButton)
@@ -2571,6 +2493,84 @@
             transclude: true,
             replace: true
         };
+    }
+})();
+(function()
+{
+    'use strict';
+
+    angular
+        .module('lumx.progress')
+        .directive('lxProgress', lxProgress);
+
+    function lxProgress()
+    {
+        return {
+            restrict: 'E',
+            templateUrl: 'progress.html',
+            scope:
+            {
+                lxColor: '@?',
+                lxDiameter: '@?',
+                lxType: '@',
+                lxValue: '@'
+            },
+            controller: LxProgressController,
+            controllerAs: 'lxProgress',
+            bindToController: true,
+            replace: true
+        };
+    }
+
+    function LxProgressController()
+    {
+        var lxProgress = this;
+
+        lxProgress.getCircularProgressValue = getCircularProgressValue;
+        lxProgress.getLinearProgressValue = getLinearProgressValue;
+        lxProgress.getProgressDiameter = getProgressDiameter;
+
+        init();
+
+        ////////////
+
+        function getCircularProgressValue()
+        {
+            if (angular.isDefined(lxProgress.lxValue))
+            {
+                return {
+                    'stroke-dasharray': lxProgress.lxValue * 1.26 + ',200'
+                };
+            }
+        }
+
+        function getLinearProgressValue()
+        {
+            if (angular.isDefined(lxProgress.lxValue))
+            {
+                return {
+                    'transform': 'scale(' + lxProgress.lxValue / 100 + ', 1)'
+                };
+            }
+        }
+
+        function getProgressDiameter()
+        {
+            if (lxProgress.lxType === 'circular')
+            {
+                return {
+                    'transform': 'scale(' + parseInt(lxProgress.lxDiameter) / 100 + ')'
+                };
+            }
+
+            return;
+        }
+
+        function init()
+        {
+            lxProgress.lxDiameter = angular.isDefined(lxProgress.lxDiameter) ? lxProgress.lxDiameter : 100;
+            lxProgress.lxColor = angular.isDefined(lxProgress.lxColor) ? lxProgress.lxColor : 'primary';
+        }
     }
 })();
 (function()
@@ -2907,7 +2907,7 @@
 
         function link(scope, element, attrs)
         {
-            var backwardOneWay = ['customStyle', 'choicesClass', 'autoHide'];
+            var backwardOneWay = ['customStyle', 'choicesClass', 'autoHide', 'canSelectAll'];
             var backwardTwoWay = ['allowClear', 'choices', 'error', 'loading', 'multiple', 'valid'];
 
             angular.forEach(backwardOneWay, function(attribute)
@@ -2998,6 +2998,8 @@
         lxSelect.registerSelectedTemplate = registerSelectedTemplate;
         lxSelect.select = select;
         lxSelect.unselect = unselect;
+        lxSelect.selectAll = selectAll;
+        lxSelect.unselectAll = unselectAll;
 
         lxSelect.ngModel = angular.isUndefined(lxSelect.ngModel) && lxSelect.multiple ? [] : lxSelect.ngModel;
         lxSelect.unconvertedModel = lxSelect.multiple ? [] : undefined;
@@ -3088,6 +3090,43 @@
             selectedTemplate = _selectedTemplate;
         }
 
+        function selectAll()
+        {
+            if (!lxSelect.multiple){
+                return;
+            }
+
+            lxSelect.ngModel = [];
+
+            if (angular.isDefined(lxSelect.selectionToModel))
+            {
+                lxSelect.choices.forEach( function(c){
+
+                    lxSelect.selectionToModel(
+                        {
+                            data: c,
+                            callback: function(resp)
+                            {
+                                lxSelect.ngModel.push(resp);
+                            }
+                        });
+                });
+
+            }
+            else
+            {
+                lxSelect.choices.forEach( function(c){
+                    lxSelect.ngModel.push(c);
+                });
+            }
+        }
+
+        function unselectAll()
+        {
+            lxSelect.ngModel = [];
+            lxSelect.unconvertedModel = [];
+        }
+
         function select(_choice)
         {
             if (lxSelect.multiple && angular.isUndefined(lxSelect.ngModel))
@@ -3098,20 +3137,20 @@
             if (angular.isDefined(lxSelect.selectionToModel))
             {
                 lxSelect.selectionToModel(
-                {
-                    data: _choice,
-                    callback: function(resp)
                     {
-                        if (lxSelect.multiple)
+                        data: _choice,
+                        callback: function(resp)
                         {
-                            lxSelect.ngModel.push(resp);
+                            if (lxSelect.multiple)
+                            {
+                                lxSelect.ngModel.push(resp);
+                            }
+                            else
+                            {
+                                lxSelect.ngModel = resp;
+                            }
                         }
-                        else
-                        {
-                            lxSelect.ngModel = resp;
-                        }
-                    }
-                });
+                    });
             }
             else
             {
@@ -3131,13 +3170,13 @@
             if (angular.isDefined(lxSelect.selectionToModel))
             {
                 lxSelect.selectionToModel(
-                {
-                    data: _choice,
-                    callback: function(resp)
                     {
-                        lxSelect.ngModel.splice(lxSelect.ngModel.indexOf(resp), 1);
-                    }
-                });
+                        data: _choice,
+                        callback: function(resp)
+                        {
+                            lxSelect.ngModel.splice(lxSelect.ngModel.indexOf(resp), 1);
+                        }
+                    });
 
                 lxSelect.unconvertedModel.splice(lxSelect.unconvertedModel.indexOf(_choice), 1);
             }
@@ -3250,8 +3289,10 @@
 
         lxSelectChoices.isArray = isArray;
         lxSelectChoices.isSelected = isSelected;
+        lxSelectChoices.isAllSelected = isAllSelected;
         lxSelectChoices.setParentController = setParentController;
         lxSelectChoices.toggleChoice = toggleChoice;
+        lxSelectChoices.toggleAllChoices = toggleAllChoices;
         lxSelectChoices.updateFilter = updateFilter;
         lxSelectChoices.onChoiceKeyDown = onChoiceKeyDown;
 
@@ -3280,6 +3321,16 @@
         function isArray()
         {
             return angular.isArray(lxSelectChoices.parentCtrl.choices);
+        }
+
+        function isAllSelected()
+        {
+            if (lxSelectChoices.parentCtrl.multiple && isArray())
+            {
+                return lxSelectChoices.parentCtrl.getSelectedModel().length === lxSelectChoices.parentCtrl.choices.length;
+            }
+
+            return false;
         }
 
         function isSelected(_choice)
@@ -3320,6 +3371,23 @@
                     }
                 });
             }, true);
+        }
+
+        function toggleAllChoices(_event)
+        {
+            if (!lxSelectChoices.parentCtrl.canSelectAll) {
+                _event.stopPropagation();
+                return;
+            }
+
+            if (lxSelectChoices.parentCtrl.multiple && isAllSelected())
+            {
+                lxSelectChoices.parentCtrl.unselectAll();
+            }
+            else
+            {
+                lxSelectChoices.parentCtrl.selectAll();
+            }
         }
 
         function toggleChoice(_choice, _event)
@@ -4423,6 +4491,11 @@ angular.module("lumx.select").run(['$templateCache', function(a) { a.put('select
     '        </li>\n' +
     '        \n' +
     '        <div ng-if="::lxSelectChoices.isArray()">\n' +
+    '            <li class="lx-select-choices__choice"\n' +
+    '                ng-class="{ \'lx-select-choices__choice--is-selected\': lxSelectChoices.isAllSelected() }"\n' +
+    '                ng-if="lxSelectChoices.parentCtrl.canSelectAll"\n' +
+    '                ng-click="lxSelectChoices.toggleAllChoices($event)">(Select All)</li>\n' +
+    '\n' +
     '            <li class="lx-select-choices__choice"\n' +
     '                ng-class="{ \'lx-select-choices__choice--is-selected\': lxSelectChoices.isSelected(choice) }"\n' +
     '                ng-repeat="choice in lxSelectChoices.parentCtrl.choices | filterChoices:lxSelectChoices.parentCtrl.filter:lxSelectChoices.filterModel"\n' +
