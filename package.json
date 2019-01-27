@@ -1,6 +1,6 @@
 {
   "name": "lumX",
-  "version": "1.0.0",
+  "version": "1.0.64",
   "description": "lumX",
   "main": "gulpfile.js",
   "dependencies": {
@@ -30,17 +30,11 @@
     "merge-stream": "^0.1.5",
     "minimist": "^1.1.0"
   },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/lumapps/lumx.git"
+    "url": "https://github.com/shilon5/lumx.git"
   },
-  "author": "LumApps",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/lumapps/lumx/issues"
-  },
-  "homepage": "https://github.com/lumapps/lumx"
+  "authors": ["LumApps", "shilon5"],
+  "license": "MIT",
+  "homepage": "https://github.com/shilon5/lumx"
 }
