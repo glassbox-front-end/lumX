@@ -7,7 +7,7 @@
     "Framework"
   ],
   "homepage": "http://ui.lumapps.com",
-  "version": "0.0.0",
+  "version": "1.0.64",
   "authors": [
     "LumApps",
     "shilon5"
@@ -15,8 +15,8 @@
   "license": "MIT",
   "main": [
     "dist/css/lumx.css",
-    "dist/lumx.js",
-    "dist/fonts/*"
+    "dist/lumx.js"/*,
+    "dist/fonts*//*"*/
   ],
   "repository": {
     "type": "git",
