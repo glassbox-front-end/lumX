@@ -1040,7 +1040,7 @@
             openDialog(_dialogId);
             deferredMap[_dialogId] = $q.defer();
 
-            return deferredMap[_dialogId].promise;
+            return deferredMap[_dialogId].promise.catch(angular.noop);
         };
         service.locals = function (_dialogId) {
             return localsMap[_dialogId];
@@ -1978,7 +1978,7 @@
                     d.reject();
                 }
             }, true);
-            return d.promise;
+            return d.promise.catch(angular.noop);
         };
 
         service.error = notifyError;
@@ -3210,7 +3210,7 @@
 
                 for (var i = 0; i < clone.length; i++)
                 {
-                    template += clone[i].outerHTML || '';
+                    template += clone[i].data || clone[i].outerHTML || '';
                 }
 
                 ctrls[1].registerSelectedTemplate(template);
@@ -3272,7 +3272,7 @@
 
                 for (var i = 0; i < clone.length; i++)
                 {
-                    template += clone[i].outerHTML || '';
+                    template += clone[i].data || clone[i].outerHTML || '';
                 }
 
                 ctrls[1].registerChoiceTemplate(template);

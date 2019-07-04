@@ -388,7 +388,7 @@
 
                 for (var i = 0; i < clone.length; i++)
                 {
-                    template += clone[i].outerHTML || '';
+                    template += clone[i].data || clone[i].outerHTML || '';
                 }
 
                 ctrls[1].registerSelectedTemplate(template);
@@ -450,7 +450,7 @@
 
                 for (var i = 0; i < clone.length; i++)
                 {
-                    template += clone[i].outerHTML || '';
+                    template += clone[i].data || clone[i].outerHTML || '';
                 }
 
                 ctrls[1].registerChoiceTemplate(template);

@@ -30,7 +30,7 @@
                     d.reject();
                 }
             }, true);
-            return d.promise;
+            return d.promise.catch(angular.noop);
         };
 
         service.error = notifyError;

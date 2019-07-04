@@ -39,7 +39,7 @@
             openDialog(_dialogId);
             deferredMap[_dialogId] = $q.defer();
 
-            return deferredMap[_dialogId].promise;
+            return deferredMap[_dialogId].promise.catch(angular.noop);
         };
         service.locals = function (_dialogId) {
             return localsMap[_dialogId];
