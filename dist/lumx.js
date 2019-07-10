@@ -1025,7 +1025,7 @@
         service.cancel = function (_dialogId) {
             closeDialog(_dialogId);
 
-            deferredMap[_dialogId].reject();
+            deferredMap[_dialogId].resolve(false);
 
             delete localsMap[_dialogId];
         };
@@ -1040,7 +1040,7 @@
             openDialog(_dialogId);
             deferredMap[_dialogId] = $q.defer();
 
-            return deferredMap[_dialogId].promise.catch(angular.noop);
+            return deferredMap[_dialogId].promise;
         };
         service.locals = function (_dialogId) {
             return localsMap[_dialogId];
@@ -1975,10 +1975,10 @@
                     d.resolve(answer);
                 }
                 else {
-                    d.reject();
+                    d.resolve(false);
                 }
             }, true);
-            return d.promise.catch(angular.noop);
+            return d.promise;
         };
 
         service.error = notifyError;

@@ -27,10 +27,10 @@
                     d.resolve(answer);
                 }
                 else {
-                    d.reject();
+                    d.resolve(false);
                 }
             }, true);
-            return d.promise.catch(angular.noop);
+            return d.promise;
         };
 
         service.error = notifyError;
