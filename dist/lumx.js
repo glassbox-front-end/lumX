@@ -1025,7 +1025,7 @@
         service.cancel = function (_dialogId) {
             closeDialog(_dialogId);
 
-            deferredMap[_dialogId].resolve(false);
+            deferredMap[_dialogId].reject();
 
             delete localsMap[_dialogId];
         };
@@ -1975,7 +1975,7 @@
                     d.resolve(answer);
                 }
                 else {
-                    d.resolve(false);
+                    d.reject();
                 }
             }, true);
             return d.promise;

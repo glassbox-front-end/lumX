@@ -27,7 +27,7 @@
                     d.resolve(answer);
                 }
                 else {
-                    d.resolve(false);
+                    d.reject();
                 }
             }, true);
             return d.promise;
